@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <title>我的 Gemini AI 助理 (安全版)</title>
     <style>
+        /* 簡單美化介面 */
         body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; line-height: 1.6; }
-        #chat-box { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #f9f9f9; }
-        input { width: 80%; padding: 10px; }
-        button { padding: 10px; cursor: pointer; background: #4285f4; color: white; border: none; }
+        #chat-box { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #f9f9f9; border-radius: 8px; }
+        .msg { margin-bottom: 10px; padding: 8px; border-radius: 5px; }
+        .user { background: #e3f2fd; text-align: right; }
+        .bot { background: #f1f8e9; text-align: left; }
+        input { width: 75%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; cursor: pointer; background: #4285f4; color: white; border: none; border-radius: 4px; }
     </style>
 </head>
 <body>
     <h2>🚀 Gemini 安全實驗室</h2>
-    <div id="chat-box">系統：管家已在後台待命...</div>
-    <input type="text" id="userInput" placeholder="傳訊息給 Python 管家...">
+    <div id="chat-box">系統：正在連線至 Python 管家...</div>
+    <input type="text" id="userInput" placeholder="輸入訊息...">
     <button onclick="askGemini()">送出</button>
 
     <script type="module">
@@ -23,20 +27,21 @@
             if (!input.value) return;
 
             const userMsg = input.value;
-            chatBox.innerHTML += `<div><b>你：</b>${userMsg}</div>`;
+            chatBox.innerHTML += `<div class="msg user"><b>你：</b>${userMsg}</div>`;
             input.value = '';
 
             try {
-                // 這裡會連向你電腦正在跑的 http://127.0.0.1:5000
+                // 向你電腦裡跑的 Python 管家發送請求
                 const response = await fetch('http://127.0.0.1:5000/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: userMsg })
                 });
+                
                 const data = await response.json();
-                chatBox.innerHTML += `<div><b>管家回報：</b>${data.reply}</div>`;
+                chatBox.innerHTML += `<div class="msg bot"><b>管家：</b>${data.reply}</div>`;
             } catch (error) {
-                chatBox.innerHTML += `<div style="color:red"><b>錯誤：</b>連不上管家！請檢查 Python 視窗是否出現 Running on http://127.0.0.1:5000</div>`;
+                chatBox.innerHTML += `<div class="msg" style="color:red"><b>❌ 錯誤：</b>連不上 Python 管家！請確認你的 Python 視窗有沒有顯示 Running on http://127.0.0.1:5000</div>`;
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
