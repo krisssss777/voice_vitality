@@ -91,23 +91,29 @@
     </section>
 
     <script>
-        // --- 核心功能：分頁切換 ---
-        function showPage(pageId) {
-            // 隱藏所有頁面
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => {
-                p.classList.remove('active');
-            });
+       function showPage(pageId) {
+    // 1. 隱藏所有區塊（包含首頁）
+    const allPages = document.querySelectorAll('.page');
+    allPages.forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none'; // 徹底隱藏
+    });
 
-            // 顯示目標頁面
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // 捲動回頂端
-            window.scrollTo(0, 0);
-        }
+    // 2. 顯示被點擊的那個區塊
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        targetPage.style.display = 'block'; // 確保顯示
+    }
+
+    // 3. 特殊處理：如果是回首頁，我們用 Flex 佈局讓它置中
+    if (pageId === 'home') {
+        targetPage.style.display = 'flex';
+    }
+
+    // 4. 讓頁面滾動回最上方，避免停留在中間
+    window.scrollTo(0, 0);
+}
 
         // --- 核心功能：AI 對話 ---
         async function askGemini() {
