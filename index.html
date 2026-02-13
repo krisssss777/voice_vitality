@@ -1,10 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
-    <title>我的 Gemini 實驗室</title>
+    <meta charset="UTF-8">
+    <title>我的 Gemini AI 助理 (安全版)</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; line-height: 1.6; }
+        #chat-box { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #f9f9f9; }
+        input { width: 80%; padding: 10px; }
+        button { padding: 10px; cursor: pointer; background: #4285f4; color: white; border: none; }
+    </style>
 </head>
 <body>
-    <h1>哈囉，這是我的第一個 AI 網站！</h1>
-    <p>準備好要和 Gemini 還有 Antigravity 一起飛行了嗎？</p>
+    <h2>🚀 Gemini 安全實驗室</h2>
+    <div id="chat-box">系統：管家已在後台待命...</div>
+    <input type="text" id="userInput" placeholder="傳訊息給 Python 管家...">
+    <button onclick="askGemini()">送出</button>
+
+    <script type="module">
+        window.askGemini = async function() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chat-box');
+            if (!input.value) return;
+
+            const userMsg = input.value;
+            chatBox.innerHTML += `<div><b>你：</b>${userMsg}</div>`;
+            input.value = '';
+
+            try {
+                // 這裡會連向你電腦正在跑的 http://127.0.0.1:5000
+                const response = await fetch('http://127.0.0.1:5000/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMsg })
+                });
+                const data = await response.json();
+                chatBox.innerHTML += `<div><b>管家回報：</b>${data.reply}</div>`;
+            } catch (error) {
+                chatBox.innerHTML += `<div style="color:red"><b>錯誤：</b>連不上管家！請檢查 Python 視窗是否出現 Running on http://127.0.0.1:5000</div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
 </body>
 </html>
